@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Semantic Web - Book Recommender</title>
+    <link rel="stylesheet" href="style.css">
+    <script type="text/javascript" src="https://unpkg.com/vis-network/standalone/umd/vis-network.min.js"></script>
+</head>
+<body>
+
+<div class="header-band">
+    <h1>Book Recommender</h1>
+</div>
+
+<div class="container">
+    <div class="section">
+        <h2>RDF Graph Visualizer </h2>
+        <h3>Upload RDF/XML File</h3>
+        <form id="uploadForm">
+            <input type="file" id="rdfFile" name="file" accept=".xml,.rdf" required>
+            <button type="submit">Visualize Graph</button>
+        </form>
+
+        <div id="mynetwork"></div>
+    </div>
+</div>
+
+<script>
+    document.getElementById('uploadForm').addEventListener('submit', async function(e) {
+        e.preventDefault();
+
+        const fileInput = document.getElementById('rdfFile');
+        const formData = new FormData();
+        formData.append("file", fileInput.files[0]);
+
+        try {
+            const response = await fetch('/api/rdf/upload', {
+                method: 'POST',
+                body: formData
+            });
+
+            const data = await response.json();
+
+            if (data.status === "success") {
+                const container = document.getElementById('mynetwork');
+                const graphData = {
+                    nodes: new vis.DataSet(data.nodes),
+                    edges: new vis.DataSet(data.edges)
+                };
+                const options = {
+                    edges: { arrows: 'to' },
+                    nodes: { shape: 'box', color: '#BAE6FD', font: { color: '#0369A1' } }
+                };
+                new vis.Network(container, graphData, options);
+            } else {
+                alert("Error parsing RDF: " + data.message);
+            }
+        } catch (error) {
+            console.error("Upload failed:", error);
+            alert("Failed to connect to the server.");
+        }
+    });
+</script>
+</body>
+</html>
