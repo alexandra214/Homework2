@@ -100,3 +100,15 @@ button:hover, .btn:hover {
     font-weight: bold;
     color: #0369A1;
 }
+
+.btn-download {
+    background-color: #0369A1; /* Deep ocean blue to complement the theme */
+    margin-top: 15px;
+    display: block; /* Makes it span neatly under the form */
+    text-align: center;
+}
+
+.btn-download:hover {
+    background-color: #075985; /* Slightly darker ocean blue on hover */
+    box-shadow: 0 4px 8px rgba(3, 105, 161, 0.3); /* Soft blue glow */
+}

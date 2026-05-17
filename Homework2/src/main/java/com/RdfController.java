@@ -74,5 +74,59 @@ public class RdfController {
 
         return response;
     }
-    
+
+    @PostMapping("/books/add")
+    public String addBook(@RequestParam String name, @RequestParam String theme, @RequestParam String level) {
+        if (currentModel == null) {
+            return "Error: Please upload the RDF file first!";
+        }
+
+        String ex = "http://example.org/schema#";
+        String bookUri = "http://example.org/book/" + name.replaceAll("\\s+", "");
+
+        Resource bookType = currentModel.createResource(ex + "Book");
+        Property hasTheme = currentModel.createProperty(ex + "hasTheme");
+        Property suitableForLevel = currentModel.createProperty(ex + "suitableForLevel");
+
+        Resource newBook = currentModel.createResource(bookUri);
+        newBook.addProperty(RDF.type, bookType);
+        newBook.addProperty(hasTheme, theme);
+        newBook.addProperty(suitableForLevel, level);
+
+        return "Successfully added book: " + name;
+    }
+
+    @PutMapping("/books/update")
+    public String updateBook(@RequestParam String name, @RequestParam String level) {
+        if (currentModel == null) {
+            return "Error: Please upload the RDF file first!";
+        }
+
+        String ex = "http://example.org/schema#";
+        String bookUri = "http://example.org/book/" + name.replaceAll("\\s+", "");
+        Property suitableForLevel = currentModel.createProperty(ex + "suitableForLevel");
+
+        Resource book = currentModel.getResource(bookUri);
+
+        if (!currentModel.contains(book, null, (RDFNode) null)) {
+            return "Error: Book '" + name + "' not found in the graph.";
+        }
+
+        book.removeAll(suitableForLevel);
+        book.addProperty(suitableForLevel, level);
+
+        return "Successfully updated '" + name + "' to " + level + " level.";
+    }
+
+    @GetMapping(value = "/export", produces = "application/xml")
+    public void exportRdf(HttpServletResponse response) throws IOException {
+        if (currentModel == null) {
+            response.sendError(HttpServletResponse.SC_BAD_REQUEST, "No RDF model loaded in memory.");
+            return;
+        }
+
+        response.setHeader("Content-Disposition", "attachment; filename=updated-books.rdf");
+        currentModel.write(response.getOutputStream(), "RDF/XML");
+    }
+
 }

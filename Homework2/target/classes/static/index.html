@@ -23,6 +23,40 @@
 
         <div id="mynetwork"></div>
     </div>
+
+    <div class="section">
+        <h3>Add a New Book</h3>
+
+        <form id="addBookForm">
+            <input type="text" id="newBookName" placeholder="Book Name" required>
+            <input type="text" id="newBookTheme" placeholder="Theme" required>
+            <select id="newBookLevel" required>
+                <option value="" disabled selected>Select Reading Level</option>
+                <option value="Beginner">Beginner</option>
+                <option value="Intermediate">Intermediate</option>
+                <option value="Advanced">Advanced</option>
+            </select>
+            <button type="submit">Add Book</button>
+        </form>
+    </div>
+
+    <div class="section">
+        <h3>Modify Reading Level</h3>
+        <form id="modifyBookForm">
+            <input type="text" id="modBookName" placeholder="Book Name" required>
+            <select id="modBookLevel" required>
+                <option value="" disabled selected>Select New Reading Level</option>
+                <option value="Beginner">Beginner</option>
+                <option value="Intermediate">Intermediate</option>
+                <option value="Advanced">Advanced</option>
+            </select>
+            <button type="submit">Update Level</button>
+        </form>
+
+        <div id="manageResultMessage" class="result-message"></div>
+
+        <a href="/api/rdf/export" class="btn btn-download">Download Updated RDF</a>
+    </div>
 </div>
 
 <script>
@@ -58,6 +92,35 @@
         } catch (error) {
             console.error("Upload failed:", error);
             alert("Failed to connect to the server.");
+        }
+    });
+
+    document.getElementById('addBookForm').addEventListener('submit', async function(e) {
+        e.preventDefault();
+        const name = document.getElementById('newBookName').value;
+        const theme = document.getElementById('newBookTheme').value;
+        const level = document.getElementById('newBookLevel').value;
+
+        try {
+            const response = await fetch(`/api/rdf/books/add?name=${name}&theme=${theme}&level=${level}`, { method: 'POST' });
+            const text = await response.text();
+            document.getElementById('manageResultMessage').innerText = text;
+        } catch (error) {
+            document.getElementById('manageResultMessage').innerText = "Error connecting to server.";
+        }
+    });
+
+    document.getElementById('modifyBookForm').addEventListener('submit', async function(e) {
+        e.preventDefault();
+        const name = document.getElementById('modBookName').value;
+        const level = document.getElementById('modBookLevel').value;
+
+        try {
+            const response = await fetch(`/api/rdf/books/update?name=${name}&level=${level}`, { method: 'PUT' });
+            const text = await response.text();
+            document.getElementById('manageResultMessage').innerText = text;
+        } catch (error) {
+            document.getElementById('manageResultMessage').innerText = "Error connecting to server.";
         }
     });
 </script>
