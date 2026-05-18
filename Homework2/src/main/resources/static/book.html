@@ -37,6 +37,27 @@
 
         <a href="bookslist.html" class="btn" style="background-color: #64748B; margin: 0;"> Back to Books</a>
     </div>
+
+</div>
+
+<div class="chat-widget">
+    <div class="chat-header">
+        <span>Library AI Assistant</span>
+    </div>
+
+    <div class="chat-body" id="chatBody">
+        <div class="chat-message msg-ai">
+            Hello! I am connected to the RDF Knowledge Graph. Ask me about this book!
+        </div>
+    </div>
+
+    <div class="chat-starters" id="chatStarters">
+    </div>
+
+    <div class="chat-input-area">
+        <input type="text" id="chatInput" class="chat-input" placeholder="Type a message...">
+        <button onclick="sendChatMessage()" class="btn btn-back">Send</button>
+    </div>
 </div>
 
 <script>
@@ -71,6 +92,80 @@
                 errorBox.style.display = 'block';
             });
     }
+
+    function loadStarters() {
+        const startersContainer = document.getElementById('chatStarters');
+        let starters = [];
+
+        if (bookName) {
+            const decodedName = decodeURIComponent(bookName);
+            starters = [
+                `Who is the author of ${decodedName}?`,
+                `What is the main theme of ${decodedName}?`,
+                `Recommend me another book similar to ${decodedName}.`
+            ];
+        } else {
+            starters = [
+                "Do you have any Science Fiction books?",
+                "List all the books suitable for Beginners."
+            ];
+        }
+
+        starters.forEach(text => {
+            const btn = document.createElement('button');
+            btn.className = 'starter-btn';
+            btn.innerText = text;
+            btn.onclick = () => {
+                document.getElementById('chatInput').value = text;
+                sendChatMessage();
+            };
+            startersContainer.appendChild(btn);
+        });
+    }
+
+    function sendChatMessage() {
+        const input = document.getElementById('chatInput');
+        const message = input.value.trim();
+        if (!message) return;
+
+        const chatBody = document.getElementById('chatBody');
+
+        chatBody.innerHTML += `<div class="chat-message msg-user">${message}</div>`;
+        input.value = '';
+        chatBody.scrollTop = chatBody.scrollHeight;
+
+        const loadId = 'load-' + Date.now();
+
+        chatBody.innerHTML += `<div id="${loadId}" class="chat-message msg-ai" style="opacity: 0.7;">Searching Vector DB...</div>`;
+        chatBody.scrollTop = chatBody.scrollHeight;
+
+        fetch('/api/chat/ask', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ message: message })
+        })
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById(loadId).remove();
+                if (data.status === 'error') {
+                    chatBody.innerHTML += `<div class="chat-message msg-ai error-box" style="margin-top: 0;">${data.message}</div>`;
+                } else {
+                    chatBody.innerHTML += `<div class="chat-message msg-ai">${data.reply}</div>`;
+                }
+                chatBody.scrollTop = chatBody.scrollHeight;
+            })
+            .catch(err => {
+                document.getElementById(loadId).remove();
+                chatBody.innerHTML += `<div class="chat-message msg-ai error-box" style="margin-top: 0;">Connection to Java server failed.</div>`;
+                chatBody.scrollTop = chatBody.scrollHeight;
+            });
+    }
+
+    document.getElementById('chatInput').addEventListener('keypress', function (e) {
+        if (e.key === 'Enter') sendChatMessage();
+    });
+
+    window.onload = loadStarters;
 </script>
 </body>
 </html>

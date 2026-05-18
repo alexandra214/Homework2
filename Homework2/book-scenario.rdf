@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<rdf:RDF
+  xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+  xmlns:ex="http://example.org/schema#">
+
+  <rdf:Description rdf:about="http://example.org/user/Alice">
+    <rdf:type rdf:resource="http://example.org/schema#User"/>
+    <ex:hasReadingLevel>Intermediate</ex:hasReadingLevel>
+    <ex:prefersTheme>Science Fiction</ex:prefersTheme>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/user/Bob">
+    <rdf:type rdf:resource="http://example.org/schema#User"/>
+    <ex:hasReadingLevel>Beginner</ex:hasReadingLevel>
+    <ex:prefersTheme>Mystery</ex:prefersTheme>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/book/Dune">
+    <rdf:type rdf:resource="http://example.org/schema#Book"/>
+    <ex:hasTheme>Science Fiction</ex:hasTheme>
+    <ex:hasTheme>Fantasy</ex:hasTheme>
+    <ex:suitableForLevel>Advanced</ex:suitableForLevel>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/book/TheSilentPatient">
+    <rdf:type rdf:resource="http://example.org/schema#Book"/>
+    <ex:hasTheme>Mystery</ex:hasTheme>
+    <ex:hasTheme>Murder</ex:hasTheme>
+    <ex:suitableForLevel>Intermediate</ex:suitableForLevel>
+  </rdf:Description>
+
+   <rdf:Description rdf:about="http://example.org/book/TheLexBook">
+     <rdf:type rdf:resource="http://example.org/schema#Book"/>
+     <ex:hasTheme>Mystery</ex:hasTheme>
+     <ex:hasTheme>Murder</ex:hasTheme>
+     <ex:suitableForLevel>Intermediate</ex:suitableForLevel>
+     <ex:author>Lex</ex:author>
+   </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/book/HungerGames">
+    <rdf:type rdf:resource="http://example.org/schema#Book"/>
+    <ex:hasTheme>Science Fiction</ex:hasTheme>
+    <ex:hasTheme>Fantasy</ex:hasTheme>
+    <ex:suitableForLevel>Beginner</ex:suitableForLevel>
+  </rdf:Description>
+
+</rdf:RDF>
