@@ -1,0 +1,42 @@
+﻿SPARQL Querys
+
+1.
+PREFIX : <http://www.semanticweb.org/alexandra/ontologies/2026/4/untitled-ontology-7#>
+
+SELECT ?user ?level
+WHERE {
+    ?user :hasReadingLevel ?level .
+}
+
+2.
+PREFIX : <http://www.semanticweb.org/alexandra/ontologies/2026/4/untitled-ontology-7#>
+
+SELECT ?book
+WHERE {
+    ?book :suitableForLevel :Intermediate .
+}
+
+3.
+PREFIX : <http://www.semanticweb.org/alexandra/ontologies/2026/4/untitled-ontology-7#>
+
+SELECT ?theme
+WHERE {
+    :Alice :prefersTheme ?theme .
+}
+
+4.
+PREFIX : <http://www.semanticweb.org/alexandra/ontologies/2026/4/untitled-ontology-7#>
+
+SELECT ?book ?theme
+WHERE {
+    ?book :hasTheme ?theme .
+}
+
+5.
+PREFIX : <http://www.semanticweb.org/alexandra/ontologies/2026/4/untitled-ontology-7#>
+
+SELECT ?book
+WHERE {
+    :Bob :prefersTheme ?theme .
+    ?book :hasTheme ?theme .
+}
