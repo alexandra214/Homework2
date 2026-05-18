@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Book Library</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="header-band">
+    <h1>Book Library</h1>
+</div>
+
+<div class="container">
+    <div class="section">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+            <button onclick="loadLibrary()">Load Books</button>
+            <a href="index.html" class="btn" style="background-color: #64748B;">Main App</a>
+        </div>
+
+        <div id="libraryContainer">
+            <p class="status-msg">Click the button above to query your active RDF model.</p>
+        </div>
+    </div>
+</div>
+
+<script>
+    function loadLibrary() {
+        const container = document.getElementById('libraryContainer');
+        container.innerHTML = '<p class="status-msg" style="color: #0EA5E9;">Querying Jena Model...</p>';
+
+        fetch('/api/rdf/books/list')
+            .then(response => response.json())
+            .then(data => {
+                container.innerHTML = '';
+
+                if (data.status === 'error') {
+                    container.innerHTML = `<div class="error-box">${data.message}</div>`;
+                    return;
+                }
+
+                if (!data.books || data.books.length === 0) {
+                    container.innerHTML = '<p class="status-msg">No books found. Did you upload your ontology first?</p>';
+                    return;
+                }
+
+                let html = '<div class="book-grid">';
+                data.books.forEach(book => {
+                    html += `
+                            <div class="book-card">
+                                <div>
+                                    <h3>${book.name}</h3>
+                                </div>
+                                <a href="book.html?name=${encodeURIComponent(book.name)}" class="btn" style="text-align: center; margin: 0; width: 100%; box-sizing: border-box;"> View Details </a>
+                            </div>
+                        `;
+                });
+                html += '</div>';
+                container.innerHTML = html;
+            })
+            .catch(err => {
+                console.error(err);
+                container.innerHTML = '<div class="error-box">Could not reach the Spring Boot API.</div>';
+            });
+    }
+</script>
+</body>
+</html>

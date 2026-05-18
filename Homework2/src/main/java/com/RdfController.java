@@ -129,4 +129,77 @@ public class RdfController {
         currentModel.write(response.getOutputStream(), "RDF/XML");
     }
 
+    @GetMapping("/books/list")
+    public Object listBooks() {
+        if (currentModel == null) {
+            return Map.of("status", "error", "message", "Error: Please upload the RDF file first!");
+        }
+
+        List<Map<String, Object>> books = new ArrayList<>();
+        java.util.Set<String> addedBookNames = new java.util.HashSet<>();
+
+        org.apache.jena.rdf.model.StmtIterator iter = currentModel.listStatements();
+        while (iter.hasNext()) {
+            org.apache.jena.rdf.model.Statement stmt = iter.nextStatement();
+            String propName = stmt.getPredicate().getLocalName();
+
+            if ("hasTheme".equals(propName) || "suitableForLevel".equals(propName)) {
+                org.apache.jena.rdf.model.Resource subject = stmt.getSubject();
+                String name = subject.getLocalName();
+
+                if (name != null && addedBookNames.add(name)) {
+                    books.add(Map.of("name", name));
+                }
+            }
+        }
+
+        return Map.of("status", "success", "books", books);
+    }
+
+    @GetMapping("/books/details")
+    public Object getBookDetails(@RequestParam String name) {
+        if (currentModel == null) {
+            return Map.of("status", "error", "message", "RDF file not loaded.");
+        }
+
+        org.apache.jena.rdf.model.Resource targetBook = null;
+
+        org.apache.jena.rdf.model.ResIterator subjects = currentModel.listSubjects();
+        while (subjects.hasNext()) {
+            org.apache.jena.rdf.model.Resource subj = subjects.nextResource();
+            if (name.equals(subj.getLocalName())) {
+                targetBook = subj;
+                break;
+            }
+        }
+
+        if (targetBook == null) {
+            return Map.of("status", "error", "message", "Book not found in the uploaded file.");
+        }
+
+        List<String> themes = new ArrayList<>();
+        String level = "None Assigned";
+
+        org.apache.jena.rdf.model.StmtIterator props = targetBook.listProperties();
+        while (props.hasNext()) {
+            org.apache.jena.rdf.model.Statement stmt = props.nextStatement();
+            String propName = stmt.getPredicate().getLocalName();
+
+            if ("hasTheme".equals(propName)) {
+                org.apache.jena.rdf.model.RDFNode obj = stmt.getObject();
+                themes.add(obj.isResource() ? obj.asResource().getLocalName() : obj.toString());
+            } else if ("suitableForLevel".equals(propName)) {
+                org.apache.jena.rdf.model.RDFNode obj = stmt.getObject();
+                level = obj.isResource() ? obj.asResource().getLocalName() : obj.toString();
+            }
+        }
+
+        return Map.of(
+                "status", "success",
+                "name", name,
+                "themes", themes.isEmpty() ? "None" : String.join(", ", themes),
+                "level", level
+        );
+    }
+
 }

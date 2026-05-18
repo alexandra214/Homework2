@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Book Details</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="header-band">
+    <h1>Book Details</h1>
+</div>
+
+<div class="container" style="max-width: 650px;">
+    <div class="detail-card">
+
+        <h1 id="bookTitle" style="color: #0369A1; margin: 0; font-size: 2.2em;">Loading...</h1>
+
+        <hr style="border: 0; border-top: 1px solid #E2E8F0; margin: 25px 0;">
+
+        <div id="bookDetails" style="display: none;">
+            <div>
+                <label class="detail-label">Themes</label>
+                <span id="bookThemes" class="badge badge-theme"></span>
+            </div>
+
+            <div>
+                <label class="detail-label">Target Reading Level</label>
+                <span id="bookLevel" class="badge badge-level"></span>
+            </div>
+        </div>
+
+        <div id="errorMessage" class="error-box" style="display: none;"></div>
+
+        <hr style="border: 0; border-top: 1px solid #E2E8F0; margin: 30px 0 20px 0;">
+
+        <a href="bookslist.html" class="btn" style="background-color: #64748B; margin: 0;"> Back to Books</a>
+    </div>
+</div>
+
+<script>
+    const urlParams = new URLSearchParams(window.location.search);
+    const bookName = urlParams.get('name');
+
+    if (!bookName) {
+        document.getElementById('bookTitle').innerText = "Error";
+        const err = document.getElementById('errorMessage');
+        err.innerText = "No resource name found in the URL.";
+        err.style.display = 'block';
+    } else {
+        fetch(`/api/rdf/books/details?name=${encodeURIComponent(bookName)}`)
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === 'error') {
+                    document.getElementById('bookTitle').innerText = "Not Found";
+                    const err = document.getElementById('errorMessage');
+                    err.innerText = data.message;
+                    err.style.display = 'block';
+                } else {
+                    document.getElementById('bookTitle').innerText = data.name;
+                    document.getElementById('bookThemes').innerText = data.themes || 'None';
+                    document.getElementById('bookLevel').innerText = data.level || 'Unknown';
+                    document.getElementById('bookDetails').style.display = 'block';
+                }
+            })
+            .catch(err => {
+                document.getElementById('bookTitle').innerText = "Network Error";
+                const errorBox = document.getElementById('errorMessage');
+                errorBox.innerText = "Unable to connect to the local Spring server.";
+                errorBox.style.display = 'block';
+            });
+    }
+</script>
+</body>
+</html>

@@ -102,13 +102,103 @@ button:hover, .btn:hover {
 }
 
 .btn-download {
-    background-color: #0369A1; /* Deep ocean blue to complement the theme */
+    background-color: #0081c9; /* Deep ocean blue to complement the theme */
     margin-top: 15px;
     display: block; /* Makes it span neatly under the form */
     text-align: center;
 }
 
 .btn-download:hover {
-    background-color: #075985; /* Slightly darker ocean blue on hover */
+    background-color: #016ca3; /* Slightly darker ocean blue on hover */
     box-shadow: 0 4px 8px rgba(3, 105, 161, 0.3); /* Soft blue glow */
+}
+
+/* The grid that holds all the book cards */
+.book-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 20px;
+    margin-top: 20px;
+}
+
+/* Individual Book Cards in the list */
+.book-card {
+    background-color: white;
+    border: 1px solid #BAE6FD;
+    border-top: 5px solid #0EA5E9;
+    border-radius: 8px;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    box-shadow: 0 4px 6px rgba(14, 165, 233, 0.05);
+}
+
+.book-card h3 {
+    margin: 0 0 5px 0;
+    color: #0369A1;
+    font-size: 1.4em;
+}
+
+.book-card .subtext {
+    font-size: 0.85em;
+    color: #64748B;
+    margin-bottom: 20px;
+    display: block;
+}
+
+/* Layout for the individual book.html page */
+.detail-card {
+    background-color: white;
+    border-radius: 12px;
+    padding: 35px;
+    box-shadow: 0 10px 15px -3px rgba(14, 165, 233, 0.1);
+    border-top: 8px solid #0EA5E9;
+    margin-top: 20px;
+}
+
+.detail-label {
+    display: block;
+    font-size: 0.85em;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: #64748B;
+    font-weight: bold;
+    margin: 20px 0 5px 0;
+}
+
+/* Metadata pills (Themes and Levels) */
+.badge {
+    display: inline-block;
+    padding: 6px 14px;
+    border-radius: 20px;
+    font-size: 0.95em;
+    font-weight: bold;
+}
+
+.badge-theme {
+    background-color: #E0F2FE;
+    color: #0369A1;
+}
+
+.badge-level {
+    background-color: #DCFCE7;
+    color: #166534;
+}
+
+/* Status Messages */
+.status-msg {
+    color: #94A3B8;
+    font-style: italic;
+    margin: 0;
+}
+
+.error-box {
+    background-color: #FEF2F2;
+    border-left: 4px solid #EF4444;
+    padding: 15px;
+    color: #991B1B;
+    border-radius: 4px;
+    font-weight: bold;
+    margin-top: 15px;
 }
